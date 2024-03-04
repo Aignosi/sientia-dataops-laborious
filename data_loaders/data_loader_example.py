@@ -54,7 +54,7 @@ def load_data(*args, **kwargs):
 
     # Fechando o produtor Kafka
     producer.close()
-    # return json_data
+    return json_data
 
 
 @test
