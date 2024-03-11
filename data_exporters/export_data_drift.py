@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 
 bootstrap_servers = 'sam-00123-kafka-brokers.strimzi-kafka.svc.cluster.local:9092'
-topic_name = 'model.monitoring'  # Substitua pelo nome do seu tópico
+topic_name = 'data.drift'  # Substitua pelo nome do seu tópico
 
 
 if 'data_exporter' not in globals():
@@ -24,9 +24,14 @@ def export_data(response_data, *args, **kwargs):
         Optionally return any object and it'll be logged and
         displayed when inspecting the block run.
     """
-    model_metrics = response_data['regression']
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    data_drift = response_data['data_drift']
+
+    data_drift = pd.DataFrame(data_drift, index=[0])
+
+    data_drift['timestamp'] = timestamp
     
-    model_metrics['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     producer = KafkaProducer(
         bootstrap_servers=bootstrap_servers,
@@ -34,8 +39,7 @@ def export_data(response_data, *args, **kwargs):
     )
 
     # Enviando dados para o tópico
-
-    producer.send(topic_name, value=model_metrics)
-
+    for index, row in data_drift.iterrows():
+        producer.send(topic_name, value=row.to_dict())
     # Fechando o produtor Kafka
     producer.close()
