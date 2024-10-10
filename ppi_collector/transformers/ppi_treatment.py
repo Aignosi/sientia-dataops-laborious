@@ -47,11 +47,16 @@ def transform(df, *args, **kwargs):
     daily_df = pd.DataFrame(daily_rows)
 
     # Remove unnecessary columns
-    daily_df = daily_df.drop(columns=['start_date', 'end_date','Data'])
+    daily_df = daily_df.drop(columns=['start_date', 'end_date'])
+    daily_df["Data"] = daily_df["timestamp"]
+    daily_df.drop("timestamp", axis=1,inplace=True)
+    daily_df.rename(columns={"Data":"timestamp"},inplace=True)
 
     # Reset the index for clarity
     daily_df.reset_index(drop=True, inplace=True)
 
+
+    daily_df.columns = [x.strip() for x in daily_df.columns] #clean spaces from name 
     return daily_df
 
 

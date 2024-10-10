@@ -28,4 +28,6 @@ def export_data_to_postgres(df: DataFrame, **kwargs) -> None:
             table_name,
             index=False,  
             if_exists='replace',
+            auto_clean_name = False
+
         )
