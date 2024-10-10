@@ -1,29 +1,11 @@
-import requests
-import json
-import pandas as pd
-
-MODEL_NAME = "303-WIT-303"
-url = "http://sientia-model-api.sientia-model-api:8080/model_monitoring"
-
-
 if 'transformer' not in globals():
     from mage_ai.data_preparation.decorators import transformer
 if 'test' not in globals():
     from mage_ai.data_preparation.decorators import test
 
-
-def format_payload(data_frame, model_name):
-    formatted_data = {
-        "current_data": {column: data_frame[column].tolist() for column in data_frame.columns},
-        "model_name": model_name
-    }
-    return formatted_data
-
-
-
-
+from datetime import datetime
 @transformer
-def transform(merged_df, *args, **kwargs):
+def transform(*args, **kwargs):
     """
     Template code for a transformer block.
 
@@ -38,12 +20,14 @@ def transform(merged_df, *args, **kwargs):
         Anything (e.g. data frame, dictionary, array, int, str, etc.)
     """
     # Specify your transformation logic here
+    data = args[0][['timestamp','close']]
+    data.rename(columns={'close':'brent'},inplace=True)
+    data['petr4']  = args[1]['close']
+    data['dolar']  = args[2]['close']
+    data['timestamp'] = data['timestamp'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
 
-    formatted_data = format_payload(merged_df, MODEL_NAME)
-    response = requests.post(url, json=formatted_data)
-    response_data = response.json()
 
-    return response_data
+    return data
 
 
 @test

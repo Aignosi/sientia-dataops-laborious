@@ -3,91 +3,108 @@ blocks:
   color: null
   configuration: {}
   downstream_blocks:
-  - read_transform_data
+  - trasnformation_block
   executor_config: null
   executor_type: local_python
   has_callback: false
-  language: yaml
-  name: data hub loader
+  language: python
+  name: dolar
   retry_config: null
   status: updated
   timeout: null
   type: data_loader
   upstream_blocks: []
-  uuid: data_hub_loader
-- all_upstream_blocks_executed: false
+  uuid: dolar
+- all_upstream_blocks_executed: true
   color: null
   configuration: {}
   downstream_blocks:
-  - request_prediction
+  - trasnformation_block
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: read transform data
+  name: petr4
   retry_config: null
   status: updated
   timeout: null
-  type: transformer
-  upstream_blocks:
-  - data_hub_loader
-  uuid: read_transform_data
-- all_upstream_blocks_executed: false
+  type: data_loader
+  upstream_blocks: []
+  uuid: petr4
+- all_upstream_blocks_executed: true
   color: null
   configuration: {}
   downstream_blocks:
-  - send_data_hub
+  - trasnformation_block
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: request_prediction
+  name: brent
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
-  type: transformer
-  upstream_blocks:
-  - read_transform_data
-  uuid: request_prediction
+  type: data_loader
+  upstream_blocks: []
+  uuid: brent
 - all_upstream_blocks_executed: false
   color: null
   configuration: {}
+  downstream_blocks:
+  - tickers_postgres_saver
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: trasnformation_block
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - brent
+  - petr4
+  - dolar
+  uuid: trasnformation_block
+- all_upstream_blocks_executed: false
+  color: null
+  configuration:
+    file_source:
+      path: data_exporters/tickers_postgres_saver.py
   downstream_blocks: []
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: send data hub
+  name: tickers_postgres_saver
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
-  type: transformer
+  type: data_exporter
   upstream_blocks:
-  - request_prediction
-  uuid: send_data_hub
+  - trasnformation_block
+  uuid: tickers_postgres_saver
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
 conditionals: []
-created_at: '2024-03-04 11:50:12.619755+00:00'
+created_at: '2024-10-07 19:15:50.545660+00:00'
 data_integration: null
 description: null
 executor_config: {}
 executor_count: 1
 executor_type: null
 extensions: {}
-name: transform and predict
+name: extermal_data_tickers
 notification_config: {}
 remote_variables_dir: null
 retry_config: {}
 run_pipeline_in_one_process: false
 settings:
-  triggers:
-    save_in_code_automatically: true
+  triggers: null
 spark_config: {}
 tags: []
-type: streaming
-updated_at: '2024-03-04 16:40:05'
-uuid: transform_and_predict
+type: python
+uuid: extermal_data_tickers
 variables_dir: /home/src/mage_data/default_repo
 widgets: []
